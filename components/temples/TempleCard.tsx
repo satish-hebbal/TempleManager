@@ -1,7 +1,8 @@
 // components/temples/TempleCard.tsx
 import Image from 'next/image';
 import Link from 'next/link';
-
+import { Card, CardContent } from "@/components/UI/card";
+import { Button } from "@/components/UI/button";
 interface Temple {
   id: string;
   name: string;
@@ -18,8 +19,8 @@ interface TempleCardProps {
 
 const TempleCard: React.FC<TempleCardProps> = ({ temple }) => {
   return (
-    <div className="flex bg-white rounded-lg overflow-hidden p-4 border border-gray-100 shadow-sm mb-4 transition-all duration-200 hover:shadow-md hover:border-orange-200">
-      <div className="w-48 h-32 relative mr-4">
+    <Card className="flex p-4 mb-6 border bg-[color:var(--card-color)] border-orange-200 rounded-lg shadow-sm hover:shadow-md transition-all">
+      <div className="w-64 h-32 relative mr-4">
         <Image
           src={temple.imageUrl || `/omkar.jpg`}
           alt={temple.name}
@@ -28,45 +29,44 @@ const TempleCard: React.FC<TempleCardProps> = ({ temple }) => {
         />
       </div>
       
-      <div className="flex-1">
-        <div className="flex justify-between items-start">
+      <CardContent className="flex-1 p-0 flex flex-col">
+        <div className="flex justify-between items-start w-full">
           <div>
-            <h2 className="text-xl font-medium text-orange-500">{temple.name}</h2>
-            <p className="text-sm text-gray-500">{temple.address}</p>
+            <h2 className="text-xl font-medium text-[color:var(--primary-color)]">{temple.name}</h2>
+            <p className="text-sm text-[color:var(--secondary-color)]">{temple.address}</p>
           </div>
           
-          <Link href={`/dashboard/temples/${temple.id}`} className="text-orange-500 flex items-center">
+          <Link href={`/dashboard/temples/${temple.id}`} className="text-[color:var(--primary-color)] hover:text-orange-700 flex items-center">
             View 
             <span className="material-icons ml-1" style={{ fontSize: "18px" }}>open_in_new</span>
           </Link>
         </div>
         
-        <div className="flex mt-4 space-x-8">
-          <div>
-            <p className="text-orange-500 font-medium">{temple.subscriberCount} Subscribers</p>
-          </div>
-          <div>
-            <p className="text-orange-500 font-medium">{temple.donationCount} Donations</p>
-          </div>
-        </div>
         
-        <div className="flex justify-end mt-3">
+        <div className="flex justify-between items-center mt-auto pt-4">
+          <div className="flex space-x-8">
+            <div>
+              <p className="text-md font-medium text-[color:var(--primary-color)]">{temple.subscriberCount} Subscribers</p>
+            </div>
+            <div>
+              <p className="text-md font-medium text-[color:var(--primary-color)]">{temple.donationCount} Donations</p>
+            </div>
+          </div>
+          
           {temple.manager ? (
             <div className="flex items-center">
-              <p className="text-gray-600 mr-2">Manager</p>
-              <p className="font-medium text-orange-500">{temple.manager}</p>
+              <p className="text-[color:var(--primary-color)] mr-2">Manager</p>
+              <p className="font-medium text-[color:var(--primary-color)]">{temple.manager}</p>
             </div>
           ) : (
-            <button className="flex items-center text-orange-500 bg-orange-50 px-4 py-1 rounded-md">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="mr-2" viewBox="0 0 16 16">
-                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c0-.001-.006-.177-.188-.31C12.078 11.94 10.328 11 8 11c-2.33 0-4.078.939-4.813 1.686-.182.132-.188.308-.188.31L3 13h10l-.001-.004z"/>
-              </svg>
+            <Button variant="outline" className="bg-orange-100 text-[color:var(--primary-color)] border-orange-200 hover:bg-orange-200 hover:text-[color:var(--accent1-color)] rounded-full px-4 py-1 h-8 flex items-center">
+              <span className="material-icons mr-2" style={{ fontSize: "18px" }}>person_add</span>
               Assign Manager
-            </button>
+            </Button>
           )}
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
