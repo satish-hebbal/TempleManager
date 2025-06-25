@@ -1,5 +1,4 @@
-// components/temples/details/AboutTab.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/UI/button';
 
@@ -29,6 +28,37 @@ interface AboutTabProps {
 }
 
 const AboutTab: React.FC<AboutTabProps> = ({ temple }) => {
+  const [showManagerLink, setShowManagerLink] = useState(false);
+  const [managerFormLink, setManagerFormLink] = useState('');
+  const [copySuccess, setCopySuccess] = useState(false);
+
+  // Generate a unique link for the temple manager form
+  const generateManagerLink = () => {
+    const baseUrl = window.location.origin;
+    const uniqueId = `temple-${temple.id}-${Date.now()}`;
+    const link = `${baseUrl}/temple-manager-form?templeId=${temple.id}&token=${uniqueId}`;
+    setManagerFormLink(link);
+    setShowManagerLink(true);
+  };
+
+  // Open the manager form in a new tab
+  const openManagerForm = () => {
+    if (managerFormLink) {
+      window.open(managerFormLink, '_blank');
+    }
+  };
+
+  // Copy link to clipboard
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(managerFormLink);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  };
+
   return (
     <div>
       <div className="flex flex-col md:flex-row gap-6">
@@ -110,12 +140,91 @@ const AboutTab: React.FC<AboutTabProps> = ({ temple }) => {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center p-4 bg-orange-50 rounded-lg mb-4">
-                <p className="text-[color:var(--primary-color)] mb-2">No manager</p>
-                <Button
-                  className="bg-[color:var(--primary-color)] hover:bg-[color:var(--accent1-color)] text-white rounded-full px-4 py-2"
-                >
-                  Assign Manager
-                </Button>
+                <p className="text-[color:var(--primary-color)] mb-4 text-center font-medium">No manager</p>
+                
+                {!showManagerLink ? (
+                  <Button
+                    onClick={generateManagerLink}
+                    className="bg-[color:var(--primary-color)] hover:bg-[color:var(--accent1-color)] text-white rounded-full px-6 py-2 font-medium"
+                  >
+                    Assign Manager
+                  </Button>
+                ) : (
+                  <div className="w-full space-y-3">
+                    {/* Generated Link Display */}
+                    <div className="flex items-center gap-2 p-3 bg-white border border-orange-200 rounded-lg">
+                      <input
+                        type="text"
+                        value={managerFormLink}
+                        readOnly
+                        className="flex-1 text-sm text-gray-600 bg-transparent border-none outline-none"
+                        placeholder="Generated link will appear here"
+                      />
+                      
+                      {/* Open Link Icon */}
+                      <button
+                        onClick={openManagerForm}
+                        className="p-2 text-[color:var(--primary-color)] hover:bg-orange-100 rounded-md transition-colors"
+                        title="Open in new tab"
+                      >
+                        <svg 
+                          width="18" 
+                          height="18" 
+                          viewBox="0 0 24 24" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          strokeWidth="2" 
+                          strokeLinecap="round" 
+                          strokeLinejoin="round"
+                        >
+                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                          <polyline points="15,3 21,3 21,9"></polyline>
+                          <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                      </button>
+                      
+                      {/* Copy Link Icon */}
+                      <button
+                        onClick={copyToClipboard}
+                        className="p-2 text-[color:var(--primary-color)] hover:bg-orange-100 rounded-md transition-colors relative"
+                        title={copySuccess ? "Copied!" : "Copy to clipboard"}
+                      >
+                        {copySuccess ? (
+                          <svg 
+                            width="18" 
+                            height="18" 
+                            viewBox="0 0 24 24" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            strokeWidth="2" 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round"
+                          >
+                            <polyline points="20,6 9,17 4,12"></polyline>
+                          </svg>
+                        ) : (
+                          <svg 
+                            width="18" 
+                            height="18" 
+                            viewBox="0 0 24 24" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            strokeWidth="2" 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round"
+                          >
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                    
+                    {copySuccess && (
+                      <p className="text-green-600 text-sm text-center">Link copied to clipboard!</p>
+                    )}
+                  </div>
+                )}
               </div>
             )}
             
